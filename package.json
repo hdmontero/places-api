@@ -4,8 +4,10 @@
   "description": "This project is a system to allow users searching for places using Google Places API and plan vacation to the selected destinations, as well as providing other details about trips, schedules, etc.",
   "main": "app.js",
   "dependencies": {
+    "bcrypt": "^2.0.1",
     "crypto": "^1.0.1",
     "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.1.4"
   },
   "devDependencies": {},

@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 const BaseModel = require('./BaseModel');
-const crypto = require('crypto');
+const crypto = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const config = require('../config/config');
 
-class AuthToken extends BaseModel {
+class AuthTokenModel extends BaseModel {
 
     constructor(){
 
-        super();
+        super();         
 
         let Schema = mongoose.Schema;
 
@@ -21,23 +23,23 @@ class AuthToken extends BaseModel {
     }
 
     generateAuthToken(user, callback){
-        let string = user._id + '|' + Math.random();
-        let hash = crypto.createHash('md5').update(user._id).digest('hex');
+        if(!user) return callback(true);
 
-        this.dbmodel.create({
-            _id: new (mongoose.Types.ObjectId),
-            token: hash,
-            expires: new Date(Date.now() + (1000*30)),
-            user_id: user._id
-        }, callback)
+        // create a token
+        var token = jwt.sign({ id: user._id }, config.secretKey, {
+            expiresIn: 60 //86400 // expires in 24 hours
+        });
+
+        return callback(false, token);
     }
 
     verifyAuthToken(token, callback){
-        this.dbmodel.findOne({token: token, expires: {"$gt": new Date()}}, (error,result) => {
-            console.log(result);
-            callback(error,result);
+        jwt.verify(token, (error, decoded) => {
+            //if (error) handleError(error);
+            console.log(decoded);
+            callback(error, decoded.id);
         });
     }
 }
 
-module.exports = AuthToken;
+module.exports = new AuthTokenModel();

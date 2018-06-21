@@ -1,19 +1,19 @@
 const userModel = require('../models/user');
+const mongoose = require('mongoose');
 const AuthToken = require('../models/auth_token');
 
 class User {
 
-    findByEmailAndPassword(email, password, callback){
+    login(email, password, callback){
 
         userModel.findByEmailAndPassword(email, password, (error, user) => {
 
-            if(!error){                
-                new AuthToken().generateAuthToken(user, (error, authToken) => {
+            if(!error){               
+                AuthToken.generateAuthToken(user, (error, authToken) => {
 
                     if(!error){
                         user.auth = {
-                            token: authToken.token,
-                            expires: authToken.expires
+                            token: authToken
                         }
                     }
 
@@ -28,7 +28,7 @@ class User {
     }
 
     verifyAuthToken(token, callback){
-        new AuthToken().verifyAuthToken(token, (error,result) => {
+        AuthToken.verifyAuthToken(token, (error,result) => {
             callback(error,result);
         });
     }
