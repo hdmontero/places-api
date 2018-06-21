@@ -3,7 +3,7 @@ const userEntity = require('../../entities/user');
 class AuthController {
 
     login(email, password, callback) {
-        userEntity.findByEmailAndPassword(email, password, (error,result) => {
+        userEntity.login(email, password, (error,result) => {
             callback(error,result);
         });
     }
