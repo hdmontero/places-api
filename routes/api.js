@@ -29,7 +29,7 @@ router.post('/auth/login', (req, res) => {
         if(error){
             res.status(404).send({
                 error: true,
-                message: 'The requested user was not found in this server.'
+                message: 'The provided login data does not match any registered user.'
             });
             return;
         }
