@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth/auth');
+const PlacesController = require('../controllers/PlacesController');
 
 // before filter
 router.use(function beforeFilter(req, res, next){
@@ -16,9 +17,12 @@ router.use(function beforeFilter(req, res, next){
     
     // verify token
     authController.verifyAuthToken(token, (error, result) => {
-        if(error) handleError(error);
-        res.send({user: result});
-        return;
+        if(error){
+            res.status(401).send({error: true, message: error.message});
+            return;
+        }
+        
+        next();
     });
 });
 
@@ -47,6 +51,18 @@ router.post('/auth/register', (req, res) => {
             return;
         }
         res.send(result);
+    });
+});
+
+// places endpoints
+router.post('/places/search', (req, res) => {
+
+    PlacesController.search(req.body.query, req.body.per_page, req.body.page, (error, result) => {
+        if(error){
+            res.status(400).send({error: true, message: error});
+            return;
+        }
+        res.send({data: result});
     });
 });
  
