@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth/auth');
 
+// before filter
 router.use(function beforeFilter(req, res, next){
 
     if(req.url == '/auth/login' || req.url == '/auth/register' || req.url == '/auth/logout') return next();
@@ -21,7 +22,7 @@ router.use(function beforeFilter(req, res, next){
     });
 });
 
-// login endpoint
+// login
 router.post('/auth/login', (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
@@ -37,16 +38,12 @@ router.post('/auth/login', (req, res) => {
     });
 });
 
-// register endpoint
+// register
 router.post('/auth/register', (req, res) => {
-    let email = req.body.email;
-    let password = req.body.password;
-    authController.login(email, password, (error, result) => {
+
+    authController.registerUser(req.body, (error, result) => {
         if(error){
-            res.status(404).send({
-                error: true,
-                message: 'The requested user was not found in this server.'
-            });
+            res.status(400).send({error: true, message: error});
             return;
         }
         res.send(result);
