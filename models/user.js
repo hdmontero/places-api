@@ -31,7 +31,12 @@ class UserModel extends BaseModel {
      */
     findByEmailAndPassword(email, password, callback){
         let hashedPassword = bcrypt.hashSync(password, 8);
-        this.dbmodel.findOne({email: email, password: hashedPassword}).exec(callback);
+        this.dbmodel.findOne({email: email}, (error, user) => {
+            if(error) return callback(error.message, false);
+            let passwordIsValid = bcrypt.compareSync(password, user.password);
+            if(passwordIsValid) return callback(false, user);
+            return callback(false, false);
+        });
     }
 
     /**
@@ -56,8 +61,8 @@ class UserModel extends BaseModel {
             birth_date: new Date(data.birth_date)
         };
 
+        // save object in db
         this.dbmodel.create(userData, (error, user) => {
-            console.log(error);
             if(error){
                 if(error.code){
                     let customError = this.getErrorDescriptionByCode(error.code);
