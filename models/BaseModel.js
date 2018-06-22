@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const errorCodes = require('../config/error_codes');
 
 class BaseModel {
 
@@ -9,8 +10,14 @@ class BaseModel {
             });
         } 
     }
-
     
+    getErrorDescriptionByCode(errorCode){
+        let error = null;
+        if(errorCodes[errorCode]){
+            error = errorCodes[errorCode];
+        }
+        return error;
+    }    
 }
 
 module.exports = BaseModel;

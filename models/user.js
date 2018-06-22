@@ -7,24 +7,20 @@ const config = require('../config/config');
 class UserModel extends BaseModel {
 
     constructor(){
+        super(); 
 
-        super();
-        
         let Schema = mongoose.Schema;  
-
-        this.dbmodel = mongoose.model('User', new Schema(
-            {
-                _id: String,
-                email: {type: String, unique: true},
-                password: String,
-                phone: String,
-                fname: String,
-                lname: String,
-                birth_date: Date,
-                gender: Number,
-                auth: {token: String, expires: Date}
-            }
-        ));
+        this.dbmodel = mongoose.model('User', new Schema({
+            _id: String,
+            email: {type: String, unique: true, dropDups: true, required: true},
+            password: {type: String, required: true},
+            phone: String,
+            fname: {type: String, required: true},
+            lname: {type: String, required: true},
+            birth_date: {type: Date, required: true},
+            gender: {type: Number, required: true},
+            auth: {token: String, expires: Date}
+        }));
     }
 
     /**
@@ -38,6 +34,11 @@ class UserModel extends BaseModel {
         this.dbmodel.findOne({email: email, password: hashedPassword}).exec(callback);
     }
 
+    /**
+     * 
+     * @param {*} data 
+     * @param {*} callback 
+     */
     create(data, callback){
         let id = new mongoose.Types.ObjectId;
         let token = jwt.sign({ id: id}, config.secretKey, {
@@ -56,10 +57,19 @@ class UserModel extends BaseModel {
         };
 
         this.dbmodel.create(userData, (error, user) => {
-            if(error) handleError(error);
+            console.log(error);
+            if(error){
+                if(error.code){
+                    let customError = this.getErrorDescriptionByCode(error.code);
+                    if(customError){
+                        error = customError; 
+                    }
+                } else {
+                    error = error.message;
+                }
+            }
             return callback(error, user);
-        });
-        
+        });       
     }
 }
 
