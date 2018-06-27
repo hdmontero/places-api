@@ -58,6 +58,7 @@ router.post('/auth/register', (req, res) => {
 router.post('/places/search', (req, res) => {
 
     PlacesController.search(req.body.query, req.body.per_page, req.body.page, (error, result) => {
+        console.log('controller');
         if(error){
             res.status(400).send({error: true, message: error});
             return;
