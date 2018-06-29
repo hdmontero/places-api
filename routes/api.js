@@ -54,10 +54,26 @@ router.post('/auth/register', (req, res) => {
 
 // places endpoints
 router.post('/places/search', (req, res) => {
-
-    PlacesController.search(req.body.query, req.body.per_page, req.body.page, (error, result) => {
+    let controller = new PlacesController();
+    controller.search(req.body.query, req.body.per_page, req.body.page, (error, result) => {
         if(error){
             res.status(400).send({error: true, message: error});
+            return;
+        }
+        res.send({data: result});
+    });
+});
+
+// places endpoints
+router.get('/places/:id', (req, res) => {
+    let controller = new PlacesController();
+    controller.get(req.params.id, (error, result) => {
+        if(error){
+            res.status(400).send({error: true, message: error});
+            return;
+        }
+        if(!result) {
+            res.status(404).send({data: result});
             return;
         }
         res.send({data: result});

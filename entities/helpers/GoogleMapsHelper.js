@@ -14,7 +14,7 @@ class GoogleMapsHelper {
             query: query,
             language: 'en',
             location: [18.4640902,-69.9386589],
-            radius: 5000
+            radius: 20000
         }, (error, response) => {
             if(error) return callback(error.message, false);
             let places = [];
@@ -28,6 +28,7 @@ class GoogleMapsHelper {
                         location: place.geometry.location,
                         rating: place.rating,
                         categories: place.types,
+                        place_id: place.place_id
                         // photos: place.photos
                     });
                 });
@@ -35,6 +36,35 @@ class GoogleMapsHelper {
             callback(false, places);
         });        
     }
+
+    getPlaceDetail(placeId, callback){
+        this.googleMapsClient.place({
+            placeid: placeId,
+            language: 'en'
+        }, (error, response) => {
+            if(error) return callback(error.message, false);
+            
+            let result = response.json.result;
+            let place = {
+                gid: result.id,
+                place_id: result.place_id,
+                icon: result.icon,
+                name: result.name,
+                address: result.formatted_address,
+                phone: result.formatted_phone_number,
+                location: result.geometry.location,
+                categories: result.types,
+                website: result.website,
+                map_url: result.url,
+                opening_hours: result.opening_hours.weekday_text,
+                photos: result.photos,
+                reviews: result.reviews,
+                rating: result.rating
+            };
+
+            return callback(false, place);
+        });        
+    }
 }
 
-module.exports = new GoogleMapsHelper();
+module.exports = GoogleMapsHelper;

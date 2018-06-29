@@ -10,4 +10,4 @@ class CacheHelper {
         return mcache.get(key);
     }
 }
-module.exports = new CacheHelper();
+module.exports = CacheHelper;
