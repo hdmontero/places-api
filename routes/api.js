@@ -55,7 +55,7 @@ router.post('/auth/register', (req, res) => {
 // places endpoints
 router.post('/places/search', (req, res) => {
     let controller = new PlacesController();
-    controller.search(req.body.query, req.body.per_page, req.body.page, (error, result) => {
+    controller.search(req.body.query, (error, result) => {
         if(error){
             res.status(400).send({error: true, message: error});
             return;
@@ -73,7 +73,7 @@ router.get('/places/:id', (req, res) => {
             return;
         }
         if(!result) {
-            res.status(404).send({data: result});
+            res.status(404).send({error: true, message: "Place not found."});
             return;
         }
         res.send({data: result});

@@ -9,7 +9,7 @@ class GoogleMapsHelper {
         }); 
     }
 
-    search(query, perPage, page, callback){
+    search(query, callback){
         this.googleMapsClient.places({
             query: query,
             language: 'en',
@@ -29,11 +29,10 @@ class GoogleMapsHelper {
                         rating: place.rating,
                         categories: place.types,
                         place_id: place.place_id
-                        // photos: place.photos
                     });
                 });
             }
-            callback(false, places);
+            return callback(false, places);
         });        
     }
 
