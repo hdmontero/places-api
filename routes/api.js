@@ -1,24 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth/auth');
+const PlacesController = require('../controllers/PlacesController');
 
 // before filter
 router.use(function beforeFilter(req, res, next){
-
-    if(req.url == '/auth/login' || req.url == '/auth/register' || req.url == '/auth/logout') return next();
-    
+    if(req.url == '/auth/login' || req.url == '/auth/register' || req.url == '/auth/logout') {
+        return next();    
+    }
     // check token
     let token = req.headers['x-access-token'];
     if(!token){
         res.status(401).send('No token was provided.');
         return;
-    } 
-    
+    }    
     // verify token
     authController.verifyAuthToken(token, (error, result) => {
-        if(error) handleError(error);
-        res.send({user: result});
-        return;
+        if(error){
+            res.status(401).send({error: true, message: error.message});
+            return;
+        }        
+        next();
     });
 });
 
@@ -47,6 +49,34 @@ router.post('/auth/register', (req, res) => {
             return;
         }
         res.send(result);
+    });
+});
+
+// places endpoints
+router.post('/places/search', (req, res) => {
+    let controller = new PlacesController();
+    controller.search(req.body.query, (error, result) => {
+        if(error){
+            res.status(400).send({error: true, message: error});
+            return;
+        }
+        res.send({data: result});
+    });
+});
+
+// places endpoints
+router.get('/places/:id', (req, res) => {
+    let controller = new PlacesController();
+    controller.get(req.params.id, (error, result) => {
+        if(error){
+            res.status(400).send({error: true, message: error});
+            return;
+        }
+        if(!result) {
+            res.status(404).send({error: true, message: "Place not found."});
+            return;
+        }
+        res.send({data: result});
     });
 });
  

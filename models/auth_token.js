@@ -27,17 +27,16 @@ class AuthTokenModel extends BaseModel {
 
         // create a token
         var token = jwt.sign({ id: user._id }, config.secretKey, {
-            expiresIn: 60 //86400 // expires in 24 hours
+            expiresIn: 86400 // expires in 24 hours
         });
 
         return callback(false, token);
     }
 
     verifyAuthToken(token, callback){
-        jwt.verify(token, (error, decoded) => {
-            //if (error) handleError(error);
-            console.log(decoded);
-            callback(error, decoded.id);
+        jwt.verify(token, config.secretKey, (error, decoded) => {
+            if (error) return callback(error, false);
+            return callback(error, decoded.id);
         });
     }
 }
