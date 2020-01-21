@@ -1,3 +1,8 @@
-# Vacation Planner API
+## Places Search API
 
-This project is a system to allow users searching for places using Google Places API and plan vacation to the selected destinations, as well as providing other details about trips, schedules, etc.
+This is a project i made for fun. 
+
+This is a small API to show hot to work with NodeJS and Express, MongoDB, JWT, Data Caching and Google API service.
+
+
+## Enjoy!
